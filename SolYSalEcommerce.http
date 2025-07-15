@@ -1,0 +1,6 @@
+@SolYSalEcommerce_HostAddress = http://localhost:5289
+
+GET {{SolYSalEcommerce_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
