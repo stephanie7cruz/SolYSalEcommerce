@@ -1,110 +1,113 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging; // Para ILogger
-using SolYSalEcommerce.Models; // Asegúrate de que este using esté presente para tus modelos
-using SolYSalEcommerce.Services.Interfaces; // Para IOrderService
-using System.Security.Claims; // Necesario para obtener el UserId
+using SolYSalEcommerce.Services.Interfaces;
+using SolYSalEcommerce.DTOs.Orders;
+using System.Security.Claims;
+using System; // Para Guid y Exception
+using System.Collections.Generic; // Para IEnumerable
+using System.Threading.Tasks; // Para Task
+using Microsoft.Extensions.Logging; // <--- ¡Asegúrate de que esta línea esté aquí!
 
 namespace SolYSalEcommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize] // Descomenta si usas autenticación y quieres que solo usuarios autenticados puedan acceder a estas rutas
+    // [Authorize(Roles = "Client,Admin")] // Asegúrate de la autorización si la tienes
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        private readonly ILogger<OrdersController> _logger; // Para loguear errores
+        private readonly ILogger<OrdersController> _logger; // <--- ¡DECLARACIÓN DEL LOGGER AQUÍ!
 
+        // Constructor con inyección de IOrderService y ILogger
         public OrdersController(IOrderService orderService, ILogger<OrdersController> logger)
         {
             _orderService = orderService;
-            _logger = logger;
+            _logger = logger; // <--- ASIGNACIÓN DEL LOGGER AQUÍ!
         }
 
-        // Helper para obtener el ID de usuario
-        private Guid? GetUserId()
+        [HttpGet]
+        // [Authorize(Roles = "Client")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetUserOrders()
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
             {
-                return null;
-            }
-            return userId;
-        }
-
-        // GET: api/Orders/MyOrders
-        [HttpGet("MyOrders")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetMyOrders()
-        {
-            var userId = GetUserId();
-            if (!userId.HasValue)
-            {
-                return Unauthorized("User is not authenticated or user ID is invalid.");
-            }
-
-            var orders = await _orderService.GetMyOrdersAsync(userId.Value);
-
-            if (!orders.Any())
-            {
-                return NotFound("No orders found for this user.");
-            }
-
-            return Ok(orders);
-        }
-
-        // GET: api/Orders/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrder(Guid id)
-        {
-            var userId = GetUserId();
-            if (!userId.HasValue)
-            {
-                return Unauthorized("User is not authenticated or user ID is invalid.");
-            }
-
-            var order = await _orderService.GetOrderByIdAsync(id, userId.Value);
-
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(order);
-        }
-
-        // POST: api/Orders
-        [HttpPost]
-        public async Task<ActionResult<Order>> CreateOrder()
-        {
-            var userId = GetUserId();
-            if (!userId.HasValue)
-            {
-                return Unauthorized("User is not authenticated or user ID is invalid.");
+                _logger.LogWarning("Unauthorized attempt to get user orders: User ID not found or invalid in token.");
+                return Unauthorized("User ID not found in token.");
             }
 
             try
             {
-                // El servicio se encarga de toda la lógica, incluyendo la verificación de stock y la creación de la orden.
-                // No hay llamadas a pasarelas de pago aquí.
-                var order = await _orderService.CreateOrderFromCartAsync(userId.Value);
-
-                if (order == null)
-                {
-                    // Esto significa que el carrito estaba vacío o hubo algún otro problema manejado en el servicio
-                    return BadRequest("Failed to create order. Cart might be empty or invalid.");
-                }
-
-                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
-            }
-            catch (InvalidOperationException ex)
-            {
-                // Captura la excepción de stock insuficiente o similar lanzada por el servicio
-                _logger.LogWarning("Order creation failed due to invalid operation for user {UserId}: {Message}", userId.Value, ex.Message);
-                return BadRequest(ex.Message);
+                var orders = await _orderService.GetMyOrdersAsync(userId);
+                return Ok(orders);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while creating order for user {UserId}", userId.Value);
-                return StatusCode(500, "Internal server error while processing your request.");
+                _logger.LogError(ex, "Error getting orders for user {UserId}", userId);
+                return StatusCode(500, new { message = "Ocurrió un error interno al obtener las órdenes." });
+            }
+        }
+
+        [HttpGet("{orderId}")]
+        // [Authorize(Roles = "Client")]
+        public async Task<ActionResult<OrderDto>> GetOrderById(Guid orderId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+            {
+                _logger.LogWarning("Unauthorized attempt to get order {OrderId}: User ID not found or invalid in token.", orderId);
+                return Unauthorized("User ID not found in token.");
+            }
+
+            try
+            {
+                var order = await _orderService.GetOrderByIdAsync(orderId, userId);
+                if (order == null)
+                {
+                    _logger.LogInformation("Order {OrderId} not found or not accessible for user {UserId}.", orderId, userId);
+                    return NotFound("Order not found or not accessible to this user.");
+                }
+                return Ok(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting order {OrderId} for user {UserId}.", orderId, userId);
+                return StatusCode(500, new { message = "Ocurrió un error interno al obtener la orden." });
+            }
+        }
+
+        [HttpPost]
+        // [Authorize(Roles = "Client")]
+        public async Task<ActionResult<CreateOrderResponseDto>> CreateOrder()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+            {
+                _logger.LogWarning("Unauthorized attempt to create order: User ID not found or invalid in token.");
+                return Unauthorized("User ID not found in token.");
+            }
+
+            try
+            {
+                var createdOrderDto = await _orderService.CreateOrderFromCartAsync(userId);
+                if (createdOrderDto == null)
+                {
+                    _logger.LogWarning("Failed to create order for user {UserId}: Cart was empty.", userId);
+                    return BadRequest(new { message = "El carrito está vacío. No se puede crear una orden." });
+                }
+
+                // Ajusta el nameof(GetOrderById) para que el método tenga un parámetro {orderId}
+                // Si el parámetro se llama 'id', entonces sería new { id = createdOrderDto.OrderId }
+                return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrderDto.OrderId }, createdOrderDto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Failed to create order for user {UserId} due to invalid operation: {Message}", userId, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while creating order for user {UserId}.", userId);
+                return StatusCode(500, new { message = "Ocurrió un error interno al crear la orden." });
             }
         }
     }

@@ -57,7 +57,7 @@ namespace SolYSalEcommerce.Controllers
 
         [HttpPut("{id:guid}")]
         [Authorize(Roles = "Admin")] // Solo administradores pueden actualizar productos
-        public async Task<IActionResult> Update(Guid id, [FromBody] CreateProductDto updateProductDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductDto updateProductDto) 
         {
             if (!ModelState.IsValid)
             {

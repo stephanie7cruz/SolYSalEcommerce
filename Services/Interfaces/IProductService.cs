@@ -8,7 +8,7 @@ namespace SolYSalEcommerce.Services.Interfaces
         Task<IEnumerable<ProductDto>> GetAllProducts();
         Task<ProductDto?> GetProductById(Guid id);
         Task<ProductDto> CreateProduct(CreateProductDto createProductDto);
-        Task<ProductDto?> UpdateProduct(Guid id, CreateProductDto updateProductDto);
+        Task<ProductDto?> UpdateProduct(Guid id, UpdateProductDto updateProductDto); 
         Task<bool> DeleteProduct(Guid id);
         Task<IEnumerable<ProductDto>> SearchProducts(string searchTerm);
     }

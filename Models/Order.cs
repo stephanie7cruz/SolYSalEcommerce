@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; // ¡Asegúrate de que este using esté aquí!
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SolYSalEcommerce.Models
 {
@@ -16,19 +16,21 @@ namespace SolYSalEcommerce.Models
         public Guid UserId { get; set; }
         public User User { get; set; } = null!; // Propiedad de navegación
 
+        // Si quieres un número de orden único
+        [MaxLength(50)]
+        public string OrderNumber { get; set; } = string.Empty; // <--- NUEVA PROPIEDAD SI LA NECESITAS
+
         [Required]
         public DateTime OrderDate { get; set; }
 
         [Required]
-        // ¡¡¡AÑADE ESTA LÍNEA!!!
-        [Column(TypeName = "decimal(18,2)")] // Define precisión: 18 dígitos en total, 2 después del punto decimal
-        public decimal TotalPrice { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalPrice { get; set; } // Nombre en tu modelo de EF
 
         [Required]
         [MaxLength(50)]
-        public string OrderStatus { get; set; } = string.Empty;
+        public string OrderStatus { get; set; } = string.Empty; // Nombre en tu modelo de EF
 
-        // Propiedad de navegación para los detalles del pedido
         public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }
 }

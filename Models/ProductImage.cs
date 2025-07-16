@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SolYSalEcommerce.Data.Models
+namespace SolYSalEcommerce.Models
 {
     public class ProductImage
     {

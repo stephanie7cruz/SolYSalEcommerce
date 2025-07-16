@@ -9,6 +9,7 @@ using SolYSalEcommerce.Services.Implementations; // Para tus implementaciones de
 using SolYSalEcommerce.Services.Interfaces;     // ¡NUEVO! Necesario para tus interfaces de servicio (IAuthService, IProductService, etc.)
 using System.Security.Claims;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,35 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(option =>
+{
+    // Define el esquema de seguridad para JWT (Bearer Token)
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Por favor, introduce un token JWT válido (ejemplo: 'Bearer TU_TOKEN')",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    // Asegura que las operaciones de API requieran un token Bearer para autenticación
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer" // Debe coincidir con el nombre definido arriba
+                }
+            },
+            new string[] { }
+        }
+    });
+});
 
 // Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
