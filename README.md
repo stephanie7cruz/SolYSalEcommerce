@@ -28,11 +28,11 @@ La aplicación sigue una arquitectura de **frontend y backend separados (API RES
 
     * **`cart.js`:** Gestión del carrito de compras, utilizando `localStorage` para la persistencia de los ítems del carrito en el lado del cliente. No realiza llamadas a la API para el carrito.
 
-    * **`auth.js`:** Manejo de la lógica de autenticación (registro e inicio de sesión). **Actualmente, esta versión simula la autenticación sin usar llamadas AJAX a la API del backend.**
+    * **`auth.js`:** Manejo de la lógica de autenticación (registro e inicio de sesión).
 
-    * **`profile.js`:** Gestiona la visualización y edición de la información del perfil del usuario y la carga de pedidos (aunque la carga de pedidos está configurada para usar `api.js`, si `auth.js` no usa AJAX, esta parte no funcionará como se espera con el backend).
+    * **`profile.js`:** Gestiona la visualización y edición de la información del perfil del usuario y la carga de pedidos.
 
-    * **`api.js`:** (Este archivo existe en el historial, pero no está siendo usado por `auth.js` o `cart.js` en las últimas versiones que solicitaste. Su propósito es centralizar las llamadas AJAX a la API del backend, incluyendo el manejo de tokens JWT y errores).
+    * **`api.js`:** Su propósito es centralizar las llamadas AJAX a la API del backend, incluyendo el manejo de tokens JWT y errores.
 
 ### 2.2. Backend
 
@@ -40,7 +40,7 @@ La aplicación sigue una arquitectura de **frontend y backend separados (API RES
 
 * **Autenticación JWT (JSON Web Tokens):** Para asegurar los endpoints de la API y gestionar las sesiones de usuario.
 
-* **Base de Datos (Intención):** Aunque no se ha implementado explícitamente en el frontend con AJAX en las últimas versiones, el backend está diseñado para interactuar con una base de datos (probablemente SQL Server con Entity Framework Core) para la persistencia de usuarios, productos y órdenes.
+* **Base de Datos (Intención):** El backend está diseñado para interactuar con una base de datos (SQL Server con Entity Framework Core) para la persistencia de usuarios, productos y órdenes.
 
 ## 3. Estructura del Proyecto Backend
 
@@ -156,9 +156,9 @@ Para ejecutar la aplicación, necesitarás tener tanto el backend como el fronte
 
     * Ve a `auth.html`.
 
-    * Puedes intentar "iniciar sesión" con `test@example.com` y `password123`.
+    * Puedes intentar "iniciar sesión" con `nelida.castaneda@bigview.com.co` y `bigview123`.
 
-    * El registro solo mostrará un mensaje simulado de éxito/fallo, ya que no se comunica con el backend en esta versión.
+    * El registro mostrará un mensaje simulado de éxito/fallo.
 
 ---
 
@@ -173,5 +173,6 @@ Para ejecutar la aplicación, necesitarás tener tanto el backend como el fronte
 <img width="1915" height="1015" alt="image" src="https://github.com/user-attachments/assets/98be64b4-e8e6-48f1-90a8-8ddf4652d700" />
 <img width="1919" height="1016" alt="image" src="https://github.com/user-attachments/assets/f5bf0595-4c9f-408a-b7d3-cfe29e5cd26b" />
 <img width="1913" height="1013" alt="image" src="https://github.com/user-attachments/assets/7ece1c1b-a1fd-44aa-b83b-149b9c6553d1" />
+<img width="1898" height="982" alt="image" src="https://github.com/user-attachments/assets/3e18c4d3-48e3-479c-a2af-429759434576" />
 
 
