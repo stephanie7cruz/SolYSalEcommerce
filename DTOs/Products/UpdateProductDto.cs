@@ -1,4 +1,4 @@
-﻿using System; // Para Guid
+﻿using System; 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -26,7 +26,7 @@ namespace SolYSalEcommerce.DTOs.Products
 
     public class UpdateProductVariantDto
     {
-        // ESTO ES LO CLAVE: El ID de la variante.
+        // El ID de la variante.
         // Debe ser Guid? (nullable) porque si es una variante nueva que se añade en la actualización, no tendrá un ID.
         // Si es una variante existente, el cliente DEBE enviarlo.
         public Guid? Id { get; set; } // Hacemos el ID nullable para nuevas variantes
@@ -50,7 +50,7 @@ namespace SolYSalEcommerce.DTOs.Products
         [MaxLength(500, ErrorMessage = "La URL de la imagen no puede exceder los 500 caracteres.")]
         public string? ImageUrl { get; set; } // URL de la imagen específica para esta variante
 
-        // **NUEVO:** Permite especificar un precio base diferente para la variante en la actualización.
+        // Permite especificar un precio base diferente para la variante en la actualización.
         // Si es nulo, el servicio debería mantener el precio existente o re-heredar del padre.
         [Range(0.01, (double)decimal.MaxValue, ErrorMessage = "El precio base de la variante debe ser mayor a cero.")]
         public decimal? BasePrice { get; set; } // Hacemos la propiedad anulable (nullable)

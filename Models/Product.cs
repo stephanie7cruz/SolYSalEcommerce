@@ -20,11 +20,11 @@ namespace SolYSalEcommerce.Models
 
         [Required]
         [Column(TypeName = "decimal(18,2)")] // Para precisión de moneda
-        public decimal BasePrice { get; set; } // <--- Esta propiedad debe existir
-        public bool IsActive { get; set; } = true; // <--- Esta propiedad debe existir
+        public decimal BasePrice { get; set; } 
+        public bool IsActive { get; set; } = true; 
 
         // Propiedad de navegación para Variantes de Producto
-        public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>(); // <--- Esta propiedad debe existir
+        public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>(); 
 
         // Propiedad de navegación para las imágenes asociadas a este producto
         public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();

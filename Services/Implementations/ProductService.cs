@@ -3,9 +3,9 @@ using SolYSalEcommerce.Data;
 using SolYSalEcommerce.DTOs.Products;
 using SolYSalEcommerce.Models;
 using SolYSalEcommerce.Services.Interfaces;
-using System; // Para Guid
+using System; 
 using System.Collections.Generic;
-using System.Linq; // Necesario para .ToHashSet()
+using System.Linq; 
 
 namespace SolYSalEcommerce.Services.Implementations
 {
@@ -41,7 +41,7 @@ namespace SolYSalEcommerce.Services.Implementations
                     SKU = pv.SKU,
                     Stock = pv.Stock,
                     ImageUrl = pv.ImageUrl,
-                    BasePrice = pv.BasePrice // Asegúrate de mapear BasePrice aquí también
+                    BasePrice = pv.BasePrice 
                 }).ToList()
             });
         }
@@ -70,7 +70,7 @@ namespace SolYSalEcommerce.Services.Implementations
                     SKU = pv.SKU,
                     Stock = pv.Stock,
                     ImageUrl = pv.ImageUrl,
-                    BasePrice = pv.BasePrice // Asegúrate de mapear BasePrice aquí también
+                    BasePrice = pv.BasePrice 
                 }).ToList()
             };
         }
@@ -83,7 +83,7 @@ namespace SolYSalEcommerce.Services.Implementations
                 Description = createProductDto.Description,
                 BasePrice = createProductDto.BasePrice,
                 IsActive = createProductDto.IsActive,
-                Variants = new List<ProductVariant>() // Asegura que la colección está inicializada
+                Variants = new List<ProductVariant>() 
             };
 
             foreach (var variantDto in createProductDto.Variants)
@@ -92,10 +92,9 @@ namespace SolYSalEcommerce.Services.Implementations
                 // Si variantDto.BasePrice es nulo, usa el BasePrice del producto padre
                 var variantBasePrice = variantDto.BasePrice ?? product.BasePrice;
 
-                // Validar que el precio de la variante sea mayor que cero
+                // Valida que el precio de la variante sea mayor que cero
                 if (variantBasePrice <= 0)
                 {
-                    // Puedes lanzar una excepción, loggear una advertencia, o asignar un valor predeterminado si es un error.
                     throw new ArgumentException($"El precio base de la variante con SKU '{variantDto.SKU}' debe ser mayor a cero.");
                 }
 
@@ -121,7 +120,7 @@ namespace SolYSalEcommerce.Services.Implementations
         public async Task<ProductDto?> UpdateProduct(Guid id, UpdateProductDto updateProductDto)
         {
             var existingProduct = await _context.Products
-                                                .Include(p => p.Variants) // ¡MUY IMPORTANTE cargar las variantes existentes!
+                                                .Include(p => p.Variants) 
                                                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (existingProduct == null)
@@ -185,10 +184,7 @@ namespace SolYSalEcommerce.Services.Implementations
                     }
                     else
                     {
-                        // Advertencia: El cliente envió un ID de variante existente que no corresponde a este producto
-                        // o es un ID inválido. Podrías lanzar una excepción o loggear.
-                        // Por ahora, para evitar problemas, lo trataremos como una nueva variante si el ID no se encuentra en la colección cargada.
-                        // Sin embargo, un manejo más robusto podría ser devolver un error 400.
+
                         Console.WriteLine($"Advertencia: Variane con ID {variantDto.Id} no encontrada para actualizar en el producto {id}. Se tratará como nueva.");
                         existingProduct.Variants.Add(new ProductVariant
                         {
@@ -287,7 +283,7 @@ namespace SolYSalEcommerce.Services.Implementations
                     SKU = pv.SKU,
                     Stock = pv.Stock,
                     ImageUrl = pv.ImageUrl,
-                    BasePrice = pv.BasePrice // Asegúrate de mapear BasePrice aquí también
+                    BasePrice = pv.BasePrice
                 }).ToList()
             });
         }

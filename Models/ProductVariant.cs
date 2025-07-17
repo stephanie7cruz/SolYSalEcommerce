@@ -36,7 +36,7 @@ namespace SolYSalEcommerce.Models
         [MaxLength(500)]
         public string? ImageUrl { get; set; } // URL de la imagen principal de la variante
 
-        // Propiedad de navegación inversa (si la usas, ej. para CartItems, OrderDetails)
+        // Propiedad de navegación inversa
         public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
         public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }

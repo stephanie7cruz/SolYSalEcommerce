@@ -1,9 +1,8 @@
-﻿// Services/Implementations/OrderService.cs
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SolYSalEcommerce.Data;
 using SolYSalEcommerce.Models;
 using SolYSalEcommerce.Services.Interfaces;
-using SolYSalEcommerce.DTOs.Orders; // Importar los DTOs de órdenes
+using SolYSalEcommerce.DTOs.Orders; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,14 +43,14 @@ namespace SolYSalEcommerce.Services.Implementations
                 OrderDetails = o.OrderDetails.Select(od => new OrderDetailDto
                 {
                     Id = od.Id,
-                    OrderId = od.OrderId, // <-- CORREGIDO: Asigna el OrderId real del detalle
+                    OrderId = od.OrderId, 
                     ProductVariantId = od.ProductVariantId,
                     Quantity = od.Quantity,
                     UnitPrice = od.PricePerUnit,
                     ProductVariantDetails = new ProductVariantInOrderDto
                     {
                         Id = od.ProductVariant.Id,
-                        ProductId = od.ProductVariant.ProductId, // <-- CORREGIDO: Asigna el ProductId real
+                        ProductId = od.ProductVariant.ProductId, 
                         Sku = od.ProductVariant.SKU,
                         Color = od.ProductVariant.Color,
                         Size = od.ProductVariant.Size,
@@ -87,14 +86,14 @@ namespace SolYSalEcommerce.Services.Implementations
                 OrderDetails = order.OrderDetails.Select(od => new OrderDetailDto
                 {
                     Id = od.Id,
-                    OrderId = od.OrderId, // <-- CORREGIDO: Asigna el OrderId real del detalle
+                    OrderId = od.OrderId, 
                     ProductVariantId = od.ProductVariantId,
                     Quantity = od.Quantity,
                     UnitPrice = od.PricePerUnit,
                     ProductVariantDetails = new ProductVariantInOrderDto
                     {
                         Id = od.ProductVariant.Id,
-                        ProductId = od.ProductVariant.ProductId, // <-- CORREGIDO: Asigna el ProductId real
+                        ProductId = od.ProductVariant.ProductId, 
                         Sku = od.ProductVariant.SKU,
                         Color = od.ProductVariant.Color,
                         Size = od.ProductVariant.Size,
@@ -134,8 +133,7 @@ namespace SolYSalEcommerce.Services.Implementations
                         item.ProductVariant.SKU, item.ProductVariant.Stock, item.Quantity, userId);
                     throw new InvalidOperationException($"Insufficient stock for {item.ProductVariant.SKU}. Available: {item.ProductVariant.Stock}, Requested: {item.Quantity}");
                 }
-                // Añadir una verificación de precio aquí.
-                if (item.ProductVariant.BasePrice <= 0) // Considera si 0 es un precio válido en tu negocio
+                if (item.ProductVariant.BasePrice <= 0) 
                 {
                     _logger.LogError("ProductVariant {SKU} has invalid BasePrice ({BasePrice}) for cart item {CartItemId} for user {UserId}.",
                         item.ProductVariant.SKU, item.ProductVariant.BasePrice, item.Id, userId);
@@ -191,7 +189,7 @@ namespace SolYSalEcommerce.Services.Implementations
                     TotalAmount = newOrder.TotalPrice,
                     CreatedAt = newOrder.OrderDate,
                     Status = newOrder.OrderStatus,
-                    WompiCheckoutUrl = "" // Asegúrate de rellenar esto si usas Wompi
+                    WompiCheckoutUrl = "" 
                 };
             }
             catch (Exception ex)

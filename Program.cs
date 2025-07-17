@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore; 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SolYSalEcommerce.Data;
 using SolYSalEcommerce.Models;
-using SolYSalEcommerce.Services.Implementations; // Para tus implementaciones de servicio
-using SolYSalEcommerce.Services.Interfaces;     // ¡NUEVO! Necesario para tus interfaces de servicio (IAuthService, IProductService, etc.)
+using SolYSalEcommerce.Services.Implementations;
+using SolYSalEcommerce.Services.Interfaces;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.OpenApi.Models;
@@ -17,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+// --- Configuración de Swagger/OpenAPI con soporte JWT ---
 builder.Services.AddSwaggerGen(option =>
 {
     // Define el esquema de seguridad para JWT (Bearer Token)
@@ -46,13 +48,15 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+// --- Fin de Configuración de Swagger/OpenAPI ---
+
 
 // Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure Identity
-builder.Services.AddIdentity<User, IdentityRole<Guid>>(options => // <-- ¡Cambiado a IdentityRole<Guid>!
+builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 {
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 6;
@@ -62,7 +66,7 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options => // <-- ¡Cambia
     options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
-.AddRoles<IdentityRole<Guid>>() // ¡¡¡NUEVO!!! Esta línea registra RoleManager con el tipo de rol correcto
+.AddRoles<IdentityRole<Guid>>()
 .AddDefaultTokenProviders();
 
 // Configure JWT Authentication
@@ -94,12 +98,31 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("UserPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "User"));
 });
 
+// --- Configuración de CORS ---
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            // Permite solicitudes desde tu frontend local.
+            // Es CRÍTICO que la URL (incluyendo protocolo y puerto) coincida exactamente con la de tu frontend.
+            policy.WithOrigins("http://127.0.0.1:5500", "http://localhost:5500", "http://localhost:8080") // <-- ¡ACTUALIZADO AQUÍ!
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+            // .AllowCredentials(); // Descomenta si tu frontend envía cookies o necesita credenciales con la solicitud
+        });
+});
+// --- Fin de Configuración de CORS ---
+
+
 // Register your application services here
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
-// No se registra ningún IPaymentService o IWompiService aquí
+// Si planeas agregar servicios de pago como Wompi, los registrarías aquí:
+// builder.Services.AddScoped<IPaymentService, WompiPaymentService>(); 
+
 
 var app = builder.Build();
 
@@ -112,8 +135,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ¡NUEVO! Habilita el servicio de archivos estáticos (imágenes, CSS, JS, etc.)
-app.UseStaticFiles(); // Asegúrate de que esta línea esté aquí si quieres servir imágenes desde wwwroot
+
+app.UseCors(); // Habilita la política CORS por defecto
+
+// Habilita el servicio de archivos estáticos (imágenes, CSS, JS, etc.)
+// Asume que tus archivos estáticos están en la carpeta 'wwwroot' del proyecto.
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -128,20 +155,18 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        // Opcional y solo para desarrollo: Elimina la base de datos y la recrea desde cero.
-        // Solo descomenta si necesitas reiniciar la DB completamente en cada inicio.
-        // context.Database.EnsureDeleted(); // Cuidado al usar esto en producción o con datos importantes
+
 
         // Aplica las migraciones pendientes a la base de datos.
-        // Es redundante si ya ejecutas 'Update-Database' manualmente, pero asegura que esté actualizada.
+        // Es una buena práctica para asegurar que la DB esté actualizada al iniciar la app.
         context.Database.Migrate();
 
-        // Llama a tu método DataSeeder para insertar los productos
+        // Llama a tu método DataSeeder para insertar los productos iniciales
         await DataSeeder.SeedProductsAsync(context);
     }
     catch (Exception ex)
     {
-        // Si ocurre un error durante la siembra, lo logueamos
+        // Si ocurre un error durante la siembra de datos, lo logueamos
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "Ocurrió un error al sembrar la base de datos.");
     }

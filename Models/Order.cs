@@ -1,4 +1,4 @@
-﻿// Models/Order.cs
+﻿
 
 using System;
 using System.Collections.Generic;
@@ -16,20 +16,20 @@ namespace SolYSalEcommerce.Models
         public Guid UserId { get; set; }
         public User User { get; set; } = null!; // Propiedad de navegación
 
-        // Si quieres un número de orden único
+        // número de orden único
         [MaxLength(50)]
-        public string OrderNumber { get; set; } = string.Empty; // <--- NUEVA PROPIEDAD SI LA NECESITAS
+        public string OrderNumber { get; set; } = string.Empty; 
 
         [Required]
         public DateTime OrderDate { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalPrice { get; set; } // Nombre en tu modelo de EF
+        public decimal TotalPrice { get; set; } 
 
         [Required]
         [MaxLength(50)]
-        public string OrderStatus { get; set; } = string.Empty; // Nombre en tu modelo de EF
+        public string OrderStatus { get; set; } = string.Empty; 
 
         public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }

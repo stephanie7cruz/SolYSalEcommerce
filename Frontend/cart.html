@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras | Sol y Sal Ecommerce</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+          crossorigin="anonymous">
+    <!-- Font Awesome para iconos (ej. papelera, flechas) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+    <!-- Estilos generales de tu sitio -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Estilos específicos del carrito -->
+    <link rel="stylesheet" href="css/cart-styles.css">
+</head>
+<body>
+    <!-- Navbar (similar al de home.html o profile.html) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="home.html">Sol y Sal</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html" id="profileLink">
+                            <i class="bi bi-person"></i>
+                            <span id="profileText">Tu Cuenta</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-none" href="#" id="logoutButton">Cerrar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html" id="cartLink">
+                            <i class="fas fa-shopping-bag"></i> Carrito (<span id="cartItemCount">0</span>)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h1 class="cart-title">Resumen de Compra</h1>
+                <p class="free-shipping-banner">
+                    ¡ENVÍO GRATIS A TODA COLOMBIA POR COMPRAS MAYORES A $200.000!
+                </p>
+            </div>
+        </div>
+
+        <div class="row cart-content">
+            <!-- Columna izquierda: Detalles de los productos en el carrito -->
+            <div class="col-md-8 cart-items-section">
+                <div class="cart-steps mb-4">
+                    <span class="active-step">Resumen de compra</span>
+                    <span>Ingresa tu información</span>
+                    <span>Método de Entrega</span>
+                    <span>Método de Pago</span>
+                </div>
+
+                <div class="cart-header row d-none d-md-flex">
+                    <div class="col-md-6">PRODUCTO</div>
+                    <div class="col-md-2 text-center">CANTIDAD</div>
+                    <div class="col-md-2 text-end">PRECIO</div>
+                    <div class="col-md-2"></div> <!-- Para el botón de eliminar -->
+                </div>
+                <hr class="d-none d-md-block">
+
+                <div id="cartItemsContainer">
+                    <!-- Los productos del carrito se renderizarán aquí por JavaScript -->
+                    <p class="text-center text-muted mt-5" id="emptyCartMessage">Tu carrito está vacío.</p>
+                </div>
+            </div>
+
+            <!-- Columna derecha: Resumen del pedido y acciones -->
+            <div class="col-md-4 order-summary-section">
+                <h4 class="mb-3">RESUMEN DE LA COMPRA</h4>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>SUBTOTAL</span>
+                    <span id="cartSubtotal">$0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span>TOTAL</span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="discountCode" class="form-label">CÓDIGO DE DESCUENTO</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="discountCode" placeholder="Ingresa tu código">
+                        <button class="btn btn-outline-secondary" type="button" id="applyDiscountBtn">APLICAR</button>
+                    </div>
+                </div>
+
+                <button class="btn btn-dark w-100 mb-2" id="continueToCheckoutBtn">CONTINUAR</button>
+                <button class="btn btn-outline-dark w-100" id="continueShoppingBtn">SEGUIR COMPRANDO</button>
+
+                <div class="mt-4 text-center text-muted">
+                    <p>ELIGE UN REGALO</p>
+                    <!-- Aquí podemos añadir un placeholder para la selección de regalo -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+            crossorigin="anonymous"></script>
+    <!-- Scripts JS -->
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/cart.js"></script>
+</body>
+</html>

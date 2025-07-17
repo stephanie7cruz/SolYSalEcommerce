@@ -18,10 +18,6 @@ namespace SolYSalEcommerce.Data
                 return;
             }
 
-            // --- ¡IMPORTANTE! ACTUALIZA ESTE csvContent CON LAS NUEVAS COLUMNAS DE IMAGEN Y UNA FILA POR VARIANTE ---
-            // Asumo que tienes 3 columnas de URL de imagen al final del CSV: ImageUrl1, ImageUrl2, ImageUrl3
-            // Y que cada línea del CSV representa una combinación única de Referencia, Talla y Color.
-            // Las URLs de ejemplo apuntan a la carpeta wwwroot/images/
             string csvContent = @"
 ""Referencia"",""Coleccion"",""Talla"",""Color"",""Cantidad en Stock"",""Precio Venta (COP)"",""ImageUrl1"",""ImageUrl2"",""ImageUrl3""
 ""Dahian"",""Bikini"",""M"",""Negro"",1,59900,""/images/dahian_negro_1.jpg"",""/images/dahian_negro_2.jpg"",""/images/dahian_negro_3.jpg""
@@ -138,8 +134,8 @@ namespace SolYSalEcommerce.Data
                 {
                     // Si no está en caché, buscar en la DB
                     product = await context.Products
-                                   .Include(p => p.Variants) // Incluir variantes para comprobar existentes
-                                   .Include(p => p.Images)   // Incluir imágenes para comprobar existentes
+                                   .Include(p => p.Variants) 
+                                   .Include(p => p.Images)   
                                    .FirstOrDefaultAsync(p => p.Name == referencia && p.Description == coleccion);
 
                     if (product == null)
@@ -200,14 +196,7 @@ namespace SolYSalEcommerce.Data
                 // Asegurar que currentVariant tenga un Id si es recién creado
                 if (currentVariant.Id == Guid.Empty && context.Entry(currentVariant).State == EntityState.Added)
                 {
-                    // Si el Id aún está vacío y está marcado como Added, intentamos obtenerlo después de guardar
-                    // Esto es un escenario poco común si SaveChangesAsync() se llama correctamente.
-                    // Pero para mayor robustez, si el ID no se generó (ej. por algún error en EF o auto-generación),
-                    // podríamos tener un problema aquí. Normalmente, EF asigna el GUID al añadir.
-                    // currentVariant.Id = Guid.NewGuid(); // Fallback si no hay auto-generación, pero Guid.NewGuid() ya está en el modelo.
-                    // Re-fetch the entity if necessary to get the Id populated by EF
-                    // currentVariant = await context.ProductVariants.FirstOrDefaultAsync(pv => pv.SKU == sku);
-                    // O simplemente confiamos en que el Id ya está asignado si es Guid.NewGuid()
+
                 }
 
 
@@ -226,7 +215,7 @@ namespace SolYSalEcommerce.Data
                         context.ProductImages.Add(new ProductImage
                         {
                             ProductId = product.Id, // Se asocia al producto principal
-                            ProductVariantId = currentVariant.Id, // ¡Importante! Se asocia a la variante específica
+                            ProductVariantId = currentVariant.Id, 
                             ImageUrl = imageUrls[j],
                             Order = j + 1
                         });
@@ -234,7 +223,6 @@ namespace SolYSalEcommerce.Data
                 }
             }
 
-            // Guarda todos los cambios pendientes de Productos, Variantes e Imágenes que no se guardaron en el bucle
             await context.SaveChangesAsync();
             Console.WriteLine("Datos sembrados exitosamente.");
         }

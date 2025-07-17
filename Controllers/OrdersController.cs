@@ -2,26 +2,26 @@
 using SolYSalEcommerce.Services.Interfaces;
 using SolYSalEcommerce.DTOs.Orders;
 using System.Security.Claims;
-using System; // Para Guid y Exception
-using System.Collections.Generic; // Para IEnumerable
-using System.Threading.Tasks; // Para Task
-using Microsoft.Extensions.Logging; // <--- ¡Asegúrate de que esta línea esté aquí!
+using System; 
+using System.Collections.Generic; 
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging; 
 
 namespace SolYSalEcommerce.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize(Roles = "Client,Admin")] // Asegúrate de la autorización si la tienes
+    // [Authorize(Roles = "Client,Admin")] 
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        private readonly ILogger<OrdersController> _logger; // <--- ¡DECLARACIÓN DEL LOGGER AQUÍ!
+        private readonly ILogger<OrdersController> _logger; 
 
         // Constructor con inyección de IOrderService y ILogger
         public OrdersController(IOrderService orderService, ILogger<OrdersController> logger)
         {
             _orderService = orderService;
-            _logger = logger; // <--- ASIGNACIÓN DEL LOGGER AQUÍ!
+            _logger = logger; 
         }
 
         [HttpGet]
@@ -95,8 +95,7 @@ namespace SolYSalEcommerce.Controllers
                     return BadRequest(new { message = "El carrito está vacío. No se puede crear una orden." });
                 }
 
-                // Ajusta el nameof(GetOrderById) para que el método tenga un parámetro {orderId}
-                // Si el parámetro se llama 'id', entonces sería new { id = createdOrderDto.OrderId }
+
                 return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrderDto.OrderId }, createdOrderDto);
             }
             catch (InvalidOperationException ex)

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic; // Asegúrate de tener este using
+using System.Collections.Generic; 
 
 namespace SolYSalEcommerce.DTOs.Products
 {
@@ -46,7 +46,7 @@ namespace SolYSalEcommerce.DTOs.Products
         [MaxLength(500, ErrorMessage = "La URL de la imagen no puede exceder los 500 caracteres.")]
         public string? ImageUrl { get; set; } // URL de la imagen específica para esta variante
 
-        // **NUEVO:** Permite especificar un precio base diferente para la variante.
+        // Permite especificar un precio base diferente para la variante.
         // Si es nulo, el servicio debería tomar el BasePrice del producto padre.
         [Range(0.01, (double)decimal.MaxValue, ErrorMessage = "El precio base de la variante debe ser mayor a cero.")]
         public decimal? BasePrice { get; set; } // Hacemos la propiedad anulable (nullable)

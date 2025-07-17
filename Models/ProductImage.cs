@@ -17,7 +17,7 @@ namespace SolYSalEcommerce.Models
 
         // Clave foránea para el ProductVariant al que pertenece esta imagen.
         // Es anulable (Guid?) porque no todas las imágenes tienen que ser específicas de una variante de color/talla.
-        // Pero en tu caso, para las imágenes por color, SÍ se asociarán a una variante.
+        //Para las imágenes por color, SÍ se asociarán a una variante.
         public Guid? ProductVariantId { get; set; }
         public ProductVariant ProductVariant { get; set; }
     }

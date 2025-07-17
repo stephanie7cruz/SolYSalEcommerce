@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SolYSalEcommerce.DTOs.Orders
 {
-    public class OrderDto // Este OrderDto es para las respuestas GET de órdenes
+    public class OrderDto // Para las respuestas GET de órdenes
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
@@ -17,7 +17,5 @@ namespace SolYSalEcommerce.DTOs.Orders
         // Aquí se usa la versión segura de OrderDetailDto
         public List<OrderDetailDto> OrderDetails { get; set; } = new List<OrderDetailDto>();
 
-        // Si en algún momento necesitas el nombre de usuario o un DTO más ligero del usuario
-        // public UserSummaryDto UserInfo { get; set; }
     }
 }

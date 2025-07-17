@@ -22,6 +22,6 @@ namespace SolYSalEcommerce.Models
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal PricePerUnit { get; set; } // <--- Esta propiedad debe existir
+        public decimal PricePerUnit { get; set; } 
     }
 }

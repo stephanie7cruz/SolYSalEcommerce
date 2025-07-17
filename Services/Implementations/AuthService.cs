@@ -1,5 +1,4 @@
-﻿// Services/Implementations/AuthService.cs
-
+﻿
 using Microsoft.EntityFrameworkCore;
 using SolYSalEcommerce.Data;
 using SolYSalEcommerce.DTOs.Auth;
@@ -10,9 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Identity; // ¡Necesario para UserManager y RoleManager!
-using Microsoft.Extensions.Configuration; // Necesario para IConfiguration
-
+using Microsoft.AspNetCore.Identity; 
+using Microsoft.Extensions.Configuration; 
 
 namespace SolYSalEcommerce.Services.Implementations
 {
@@ -21,12 +19,10 @@ namespace SolYSalEcommerce.Services.Implementations
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly UserManager<User> _userManager;
-        // ¡¡¡CAMBIO CLAVE AQUÍ!!! DEBE SER IdentityRole<Guid>
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
         public AuthService(ApplicationDbContext context, IConfiguration configuration,
                            UserManager<User> userManager,
-                           // ¡¡¡CAMBIO CLAVE AQUÍ TAMBIÉN!!! DEBE SER IdentityRole<Guid>
                            RoleManager<IdentityRole<Guid>> roleManager)
         {
             _context = context;
@@ -59,10 +55,8 @@ namespace SolYSalEcommerce.Services.Implementations
             }
 
             // Asignar el rol "Client" al nuevo usuario
-            // Asegúrate de que el rol "Client" exista. Si no existe, créalo.
             if (!await _roleManager.RoleExistsAsync("Client"))
             {
-                // ¡¡¡IMPORTANTE: Crear el rol con IdentityRole<Guid>!!!
                 await _roleManager.CreateAsync(new IdentityRole<Guid>("Client"));
             }
             await _userManager.AddToRoleAsync(newUser, "Client");
